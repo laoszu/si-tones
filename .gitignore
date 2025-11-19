@@ -1,0 +1,6 @@
+data_thchs30/
+/temp
+/__pycache__
+
+*.tgz
+venv/
