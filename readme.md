@@ -11,9 +11,14 @@ source venv/bin/activate
 ```
 And then verify:
 ```
-which python
+python --version
 which pip
 echo $VIRTUAL_ENV
+```
+
+to close:
+```
+deactivate
 ```
 
 ## Training
@@ -23,8 +28,5 @@ wget http://www.openslr.org/resources/18/data_thchs30.tgz
 tar -xzf data_thchs30.tgz
 ```
 
-```
-python train_model.py
-```
-
 # Sources
+* https://brianmcfee.net/dstbook-site/content/intro.html
