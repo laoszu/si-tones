@@ -1,8 +1,10 @@
-data_thchs30/
+data_aishell/
 *.tgz
 
 /temp
-/__pycache__
 venv/
 
 temp.py
+
+__pycache__/
+*.pyc
