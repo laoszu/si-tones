@@ -8,3 +8,5 @@ temp.py
 
 __pycache__/
 *.pyc
+
+articles/

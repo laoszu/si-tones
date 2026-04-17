@@ -4,7 +4,7 @@ from torch.utils.data import Dataset
 import os
 import glob
 
-class Aishell(Dataset):
+class AishellDataset(Dataset):
     def __init__(self, path, sample_rate=44100, n_mels=80):
         self.path = path
 

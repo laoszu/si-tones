@@ -38,3 +38,13 @@ Co-existence of multiple language varieties within a single country:
 
 - [DSP Book - Brian McFee](https://brianmcfee.net/dstbook-site/content/intro.html)
 - [Speech Processing for ML - Haytham Fayek](https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html)
+
+
+# Links
+- https://arxiv.org/pdf/2406.03814
+- https://arxiv.org/pdf/2406.03814
+- http://paslab.phonetics.org.cn/wp-content/files/research_report/2004/2004_15.pdf
+- https://arxiv.org/pdf/1512.01882
+- https://kaldi-asr.org/doc/examples.html
+- https://arxiv.org/pdf/1808.10583
+- https://arxiv.org/pdf/1709.05522
