@@ -1,7 +1,7 @@
 import torch
 import json
 import os
-from to_pinyin import to_pinyin
+from utils.to_pinyin import to_pinyin
 
 class Tokenizer:
 

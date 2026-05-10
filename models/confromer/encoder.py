@@ -1,11 +1,10 @@
 import torch
 import torch.nn as nn
 
-from convolution.module import ConvolutionModule
-from feed_forward.module import FeedForwardModule
-from attention.module import SelfAttentionModule
-from attention.embedding import RelPosEncoding
-
+from models.confromer.convolution.module import ConvolutionModule
+from models.confromer.feed_forward.module import FeedForwardModule
+from models.confromer.attention.module import SelfAttentionModule
+from models.confromer.attention.embedding import RelPosEncoding
 
 class ConformerBlock(nn.Module):
     def __init__(self, d_model, num_heads, conv_kernel, dropout):

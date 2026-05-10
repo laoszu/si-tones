@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from .rmha import RelativeMultiHeadAttention
+from models.confromer.attention.rmha import RelativeMultiHeadAttention
 
 class SelfAttentionModule(nn.Module):
     def __init__(self, d_model: int, num_heads: int, dropout: float = 0.1):

@@ -26,11 +26,14 @@ class RelativeMultiHeadAttention(nn.Module):
 
     def _rel_shift(self, x):
         B, H, T, T2 = x.shape
-        zero_pad = torch.zeros(B, H, T, 1, device=x.device, dtype=x.dtype)
-        x_padded = torch.cat([zero_pad, x], dim=-1)
-        x_padded = x_padded.view(B, H, T2 + 1, T)
-        x = x_padded[:, :, 1:, :]
-        return x[:, :, :T, :]  # (B, H, T, T)
+
+        i = torch.arange(T, device=x.device).unsqueeze(1) # row index
+        j = torch.arange(T, device=x.device).unsqueeze(0) # col index
+
+        idx = (T - 1 - i) + j  # (T, T), idx[i,j] = T-1-i+j
+
+        idx = idx.view(1, 1, T, T).expand(B, H, T, T)
+        return x.gather(dim=-1, index=idx)
 
     def forward(self, x, pos_enc, key_padding_mask=None):
         B, T, _ = x.shape

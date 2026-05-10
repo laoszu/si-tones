@@ -3,7 +3,7 @@ import torchaudio
 import torch.nn as nn
 
 class FeedForwardModule(nn.Module):
-    def __init__(self, in_features, kernel_size, exp_factor=4, dropout=0.01):
+    def __init__(self, in_features, exp_factor=4, dropout=0.1):
         super(FeedForwardModule, self).__init__()
 
         # as defined in the article, expansion factpr will be 4

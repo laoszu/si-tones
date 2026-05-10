@@ -1,0 +1,20 @@
+{
+    "data_path":    "data_aishell",
+    "vocab_path":   "utils/vocab.json",
+    "checkpoint":   "checkpoints/conformer.pt",
+
+    "sample_rate":  16000,
+    "n_mels":       80,
+
+    "batch_size":   16,
+    "num_epochs":   50,
+    "lr":           5e-4,
+    "warmup_steps": 10000,
+
+    "d_model":      144,
+    "num_heads":    4,
+    "ffn_dim":      576,
+    "num_layers":   16,
+    "conv_kernel":  31,
+    "dropout":      0.1
+}

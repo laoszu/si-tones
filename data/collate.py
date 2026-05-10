@@ -1,6 +1,7 @@
 import torch
 from torch.nn.utils.rnn import pad_sequence
 
+from utils.to_pinyin import to_pinyin
 from utils.tokenizer import Tokenizer
 
 tokenizer = Tokenizer()
@@ -15,7 +16,7 @@ def collate_fn(batch):
 
     # chars -> pintin -> indexes
     encoded = [
-        torch.tensor(tokenizer.encode(t), dtype=torch.long)
+        torch.tensor(tokenizer.encode(to_pinyin(t, True)), dtype=torch.long)
         for t in transcripts
     ]
 

@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from encoder import Encoder
+from models.confromer.encoder import Encoder
 
 class Conformer(nn.Module):
     def __init__(self, input_dim, num_heads, ffn_dim, num_layers, conv_kernel, dropout, vocab_size, d_model=None):
@@ -28,8 +28,7 @@ class Conformer(nn.Module):
         self.classifier = nn.Linear(self.encoder.d_model, vocab_size)
 
     def forward(self, x, lengths=None):
-        out, lengths = self.encoder(x, lengths) # (B, T, d_model)
+        out, _ = self.encoder(x, lengths)
         logits = self.classifier(out)
         log_probs = F.log_softmax(logits, dim=-1)
-
-        return log_probs.transpose(0, 1), lengths
+        return log_probs # (B, T, vicab)

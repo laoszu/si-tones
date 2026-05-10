@@ -11,3 +11,8 @@ __pycache__/
 
 articles/
 checkpoints/
+
+.env
+# generate it yourself lol
+wandb/
+results/

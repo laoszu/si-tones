@@ -8,7 +8,7 @@ class RelPosEncoding(nn.Module):
         super(RelPosEncoding, self).__init__()
 
         self.dim = dim  # embedding dimension
-        self.pos_enc= None
+        #self.pos_enc= None
 
         self._build(max_len)
 
