@@ -62,23 +62,11 @@ class RelativeMultiHeadAttention(nn.Module):
                 key_padding_mask.unsqueeze(1).unsqueeze(2), float("-inf")
             )
 
-        attn = self.dropout(F.softmax(attn, dim=-1))
+        #attn = self.dropout(F.softmax(attn, dim=-1))
+        attn = F.softmax(attn, dim=-1)
+        attn = torch.nan_to_num(attn, nan=0.0)
+        attn = self.dropout(attn)
 
         out = torch.matmul(attn, V)
         out = out.transpose(1, 2).contiguous().view(B, T, -1)  # (B, T, d_model)
         return self.out_proj(out)
-
-
-class SelfAttentionModule(nn.Module):
-    def __init__(self, d_model, num_heads, dropout=0.1):
-        super().__init__()
-
-        self.norm = nn.LayerNorm(d_model)
-        self.attn = RelativeMultiHeadAttention(d_model, num_heads, dropout)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, x, pos_enc, key_padding_mask=None):
-        residual = x
-        x = self.norm(x)
-        x = self.attn(x, pos_enc, key_padding_mask)
-        return residual + self.dropout(x)

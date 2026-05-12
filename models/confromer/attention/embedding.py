@@ -29,13 +29,15 @@ class RelPosEncoding(nn.Module):
 
         self.register_buffer("pos_enc", enc.unsqueeze(0))
 
-
-    def extend(self, x : Tensor):
+    def extend(self, x: Tensor):
         T = x.size(1)
         needed = 2 * T - 1
-        if self.pos_enc is None or self.pos_enc.size(1) < needed:
+        if self.pos_enc.size(1) < needed:
             self._build(T)
-        self.pos_enc = self.pos_enc.to(device=x.device, dtype=x.dtype)
+ 
+        if self.pos_enc.device != x.device or self.pos_enc.dtype != x.dtype:
+            self.pos_enc = self.pos_enc.to(device=x.device, dtype=x.dtype)
+            # self.register_buffer("pos_enc", self.pos_enc.to(device=x.device, dtype=x.dtype))
 
     def forward(self, x: Tensor) -> Tensor:
         self.extend(x)

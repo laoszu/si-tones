@@ -14,7 +14,8 @@ class DepthwiseConv(nn.Module):
             kernel_size=kernel_size,
             stride=stride,
             padding=padding,
-            bias=bias
+            bias=bias,
+            groups=in_channels
         )
     
     def forward(self, x):

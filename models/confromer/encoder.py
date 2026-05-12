@@ -7,11 +7,11 @@ from models.confromer.attention.module import SelfAttentionModule
 from models.confromer.attention.embedding import RelPosEncoding
 
 class ConformerBlock(nn.Module):
-    def __init__(self, d_model, num_heads, conv_kernel, dropout):
+    def __init__(self, d_model, num_heads, ffn_dim, conv_kernel, dropout):
         super().__init__()
 
         # feed forward module (1.)
-        self.ffn1 = FeedForwardModule(d_model, dropout=dropout)
+        self.ffn1 = FeedForwardModule(d_model, ffn_dim=ffn_dim, dropout=dropout)
 
         # self-attention module
         self.self_attn = SelfAttentionModule(d_model, num_heads, dropout)
@@ -20,7 +20,7 @@ class ConformerBlock(nn.Module):
         self.conv = ConvolutionModule(d_model, conv_kernel, dropout=dropout)
 
         # feed forward module (2.)
-        self.ffn2 = FeedForwardModule(d_model, dropout=dropout)
+        self.ffn2 = FeedForwardModule(d_model, ffn_dim=ffn_dim,dropout=dropout)
 
         self.norm_out = nn.LayerNorm(d_model)
 
@@ -28,8 +28,11 @@ class ConformerBlock(nn.Module):
         x = x + 0.5 * self.ffn1(x)
         x = self.self_attn(x, pos_enc, key_padding_mask)
         x = self.conv(x)
-        x = self.norm_out(x + 0.5 * self.ffn2(x))
+
+        x = x + 0.5 * self.ffn2(x)
+        x = self.norm_out(x)
         return x
+
 
 
 class Encoder(nn.Module):
@@ -41,7 +44,7 @@ class Encoder(nn.Module):
         self.pos_encoding = RelPosEncoding(self.d_model)
 
         self.layers = nn.ModuleList([
-            ConformerBlock(self.d_model, num_heads, conv_kernel, dropout)
+            ConformerBlock(self.d_model, num_heads, ffn_dim, conv_kernel, dropout)
             for _ in range(num_layers)
         ])
 
