@@ -13,6 +13,8 @@ articles/
 checkpoints/
 
 .env
-# generate it yourself lol
+
 wandb/
 results/
+
+logs.txt
