@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Si Tone</title>
+
+</head>
+
+<body>
+  <h1>Si Tone</h1>
+  <p>Mandarin speech recognition</p>
+
+  <form id="form">
+    <input type="file" id="file-input" name="audio" accept=".wav,.mp3,.flac" required />
+    <button type="submit">Transcribe</button>
+  </form>
+
+  <audio id="player" controls style="display:none"></audio>
+
+  <p id="result"></p>
+
+  <script>
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      const player = document.getElementById('player');
+      if (file) {
+        player.src = URL.createObjectURL(file);
+        player.style.display = 'block';
+      }
+    });
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const result = document.getElementById('result');
+      result.textContent = 'Processing...';
+      const form = new FormData(e.target);
+      const res = await fetch('/api/transcribe', { method: 'POST', body: form });
+      const data = await res.json();
+      result.textContent = data.transcription;
+    });
+  </script>
+
+</body>
+</html>

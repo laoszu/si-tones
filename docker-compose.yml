@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ./frontend:/app/frontend:z
+      - ./checkpoints:/app/checkpoints:z
+      - ./main.py:/app/main.py:z
+      - ./routes:/app/routes:z
+      - ./inference:/app/inference:z
+      - ./models:/app/models:z
+      - ./utils:/app/utils:z
+      
+    environment:
+      - ENV=development

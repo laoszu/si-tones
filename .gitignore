@@ -15,6 +15,6 @@ checkpoints/
 .env
 
 wandb/
-results/
+training/results/
 
 logs.txt

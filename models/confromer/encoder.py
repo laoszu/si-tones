@@ -9,7 +9,7 @@ from models.confromer.attention.embedding import RelPosEncoding
 class ConformerBlock(nn.Module):
     def __init__(self, d_model, num_heads, ffn_dim, conv_kernel, dropout):
         super().__init__()
-
+    
         # feed forward module (1.)
         self.ffn1 = FeedForwardModule(d_model, ffn_dim=ffn_dim, dropout=dropout)
 

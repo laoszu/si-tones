@@ -1,0 +1,12 @@
+training/
+data_aishell/
+articles/
+docs/
+**/__pycache__
+**/*.pyc
+*.ipynb
+.git
+.gitignore
+docker-compose.yml
+logs.txt
+results/
