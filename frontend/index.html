@@ -21,6 +21,8 @@
   <audio id="player" controls style="display:none"></audio>
 
   <p id="result"></p>
+  <img id="wave-img" style="display:none; width:100%" />
+  <img id="mel-img" style="display:none; width:100%" />
 
   <script>
     document.getElementById('file-input').addEventListener('change', (e) => {
@@ -40,6 +42,14 @@
       const res = await fetch('/api/transcribe', { method: 'POST', body: form });
       const data = await res.json();
       result.textContent = data.transcription;
+
+      const waveImg = document.getElementById('wave-img');
+      waveImg.src = 'data:image/png;base64,' + data.wave;
+      waveImg.style.display = 'block';
+
+      const melImg = document.getElementById('mel-img');
+      melImg.src = 'data:image/png;base64,' + data.mel;
+      melImg.style.display = 'block';
     });
   </script>
 

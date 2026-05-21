@@ -8,4 +8,8 @@ async def transcribe(audio: UploadFile = File(...)):
     audio_bytes = await audio.read()
     result = run_inference(audio_bytes)
     
-    return {"transcription": result}
+    return {
+        "transcription": result["trans"],
+        "wave": result["wav"],
+        "mel": result["mel"],
+    }

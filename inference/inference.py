@@ -3,6 +3,12 @@ import json
 import sys
 import tempfile
 
+import io
+import base64
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 import torch
 import torchaudio
 import soundfile as sf
@@ -12,6 +18,9 @@ sys.path.insert(0, ROOT)
 
 from models.confromer.conformer import Conformer
 from utils.tokenizer import Tokenizer
+
+import librosa
+import numpy as np
 
 def preprocess(audio_path, sample_rate, n_mels):
     waveform, sr = sf.read(audio_path, always_2d=True)
@@ -42,6 +51,26 @@ def greedy_decode(lp, length, blank_id):
             collapsed.append(idx)
         prev = idx
     return collapsed, raw_ids
+
+def to_b64(fig):
+    buff = io.BytesIO()
+    fig.savefig(buff, format='png', dpi=100, bbox_inches='tight')
+    buff.seek(0)
+    plt.close(fig)
+    return base64.b64encode(buff.read()).decode('utf-8')
+
+
+def extract_pitch(waveform_np, sr, hop_length=160):
+    f0 = librosa.yin(
+        waveform_np,
+        fmin=librosa.note_to_hz('C2'),# ~65 Hz
+        fmax=librosa.note_to_hz('C7'), # ~2093 Hz
+        sr=sr,
+        hop_length=hop_length,
+    )
+
+    f0[f0 < 60] = np.nan
+    return f0
 
 _model = None
 _tokenizer = None
@@ -84,7 +113,7 @@ def run_inference(audio_bytes: bytes) -> str:
         tmp_path = tmp.name
 
     try:
-        mel, _, _ = preprocess(tmp_path, _cfg['sample_rate'], _cfg['n_mels'])
+        mel, waveform, sr = preprocess(tmp_path, _cfg['sample_rate'], _cfg['n_mels'])
     finally:
         os.unlink(tmp_path)
 
@@ -98,4 +127,37 @@ def run_inference(audio_bytes: bytes) -> str:
     collapsed, _ = greedy_decode(log_probs[0], mel_lengths[0].item(), blank_id)
     predicted = _tokenizer.decode(collapsed)
 
-    return predicted if predicted else '(blank)'
+    wave_np = waveform.squeeze().numpy()
+    f0 = extract_pitch(wave_np, sr, hop_length=160)
+
+    t_wave = np.arange(len(wave_np)) / sr
+    t_f0 = np.arange(len(f0)) * 160 / sr
+
+    fig, ax1 = plt.subplots(figsize=(10, 3))
+
+    ax1.plot(t_wave, wave_np, linewidth=0.4, color='steelblue', alpha=0.6, label='waveform')
+    ax1.set_ylabel('Amplitude', color='steelblue')
+    ax1.set_xlabel('Time (s)')
+
+    ax2 = ax1.twinx()
+    ax2.plot(t_f0, f0, linewidth=1.5, color='orangered', label='F0 (pitch)')
+    ax2.set_ylabel('Frequency (Hz)', color='orangered')
+    ax2.set_ylim(50, 400)
+
+    ax1.set_title('Waveform + Pitch (F0)')
+    fig.legend(loc='upper right')
+    wav_img = to_b64(fig)
+
+    fig, ax = plt.subplots(figsize=(10, 3))
+    ax.imshow(mel.T.numpy(), aspect='auto', origin='lower', cmap='viridis')
+    ax.set_title('Mel spectrogram')
+    ax.set_xlabel('Frame')
+    ax.set_ylabel('Mel bin')
+    mel_img = to_b64(fig)
+
+
+    return {
+        "trans": predicted if predicted else '(blank)',
+        "wav": wav_img,
+        "mel": mel_img
+    }
