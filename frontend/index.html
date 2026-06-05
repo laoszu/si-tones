@@ -1,57 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Si Tone</title>
-
-</head>
-
-<body>
-  <h1>Si Tone</h1>
-  <p>Mandarin speech recognition</p>
-
-  <form id="form">
-    <input type="file" id="file-input" name="audio" accept=".wav,.mp3,.flac" required />
-    <button type="submit">Transcribe</button>
-  </form>
-
-  <audio id="player" controls style="display:none"></audio>
-
-  <p id="result"></p>
-  <img id="wave-img" style="display:none; width:100%" />
-  <img id="mel-img" style="display:none; width:100%" />
-
-  <script>
-    document.getElementById('file-input').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      const player = document.getElementById('player');
-      if (file) {
-        player.src = URL.createObjectURL(file);
-        player.style.display = 'block';
-      }
-    });
-
-    document.getElementById('form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const result = document.getElementById('result');
-      result.textContent = 'Processing...';
-      const form = new FormData(e.target);
-      const res = await fetch('/api/transcribe', { method: 'POST', body: form });
-      const data = await res.json();
-      result.textContent = data.transcription;
-
-      const waveImg = document.getElementById('wave-img');
-      waveImg.src = 'data:image/png;base64,' + data.wave;
-      waveImg.style.display = 'block';
-
-      const melImg = document.getElementById('mel-img');
-      melImg.src = 'data:image/png;base64,' + data.mel;
-      melImg.style.display = 'block';
-    });
-  </script>
-
-</body>
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Si Tone</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

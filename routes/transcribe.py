@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 from inference.inference import run_inference
 
-router = APIRouter(prefix="/api")
+router = APIRouter()#prefix="/api")
 
 @router.post("/transcribe")
 async def transcribe(audio: UploadFile = File(...)):
@@ -9,7 +9,7 @@ async def transcribe(audio: UploadFile = File(...)):
     result = run_inference(audio_bytes)
     
     return {
-        "transcription": result["trans"],
-        "wave": result["wav"],
+        "trans": result["trans"],
+        "wav": result["wav"],
         "mel": result["mel"],
     }

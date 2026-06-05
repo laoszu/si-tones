@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=DM+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:     #1a1612;
+  --paper:   #f5f0e8;
+  --red:     #c0392b;
+  --red-dim: #e8c4be;
+  --gold:    #b8860b;
+  --muted:   #7a6f63;
+  --border:  #d4c9bc;
+  --panel:   #ede7d9;
+  --mono:    'DM Mono', monospace;
+  --serif:   'Noto Serif SC', serif;
+}
+
+body { background: var(--paper); color: var(--ink); font-family: var(--mono); min-height: 100vh; }
+
+.shell { max-width: 720px; margin: 0 auto; padding: 0 24px 60px; display: flex; flex-direction: column; min-height: 100vh; }
+
+.header { display: flex; align-items: center; gap: 20px; padding: 40px 0 32px; border-bottom: 2px solid var(--ink); }
+.logo-mark { font-family: var(--serif); font-size: 56px; line-height: 1; color: var(--red); flex-shrink: 0; user-select: none; }
+.header-text { flex: 1; }
+.site-title { font-family: var(--serif); font-size: 32px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink); line-height: 1; }
+.site-sub { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+
+.nav { display: flex; gap: 2px; border: 1px solid var(--border); border-radius: 3px; padding: 3px; background: var(--panel); flex-shrink: 0; }
+.nav-btn { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; padding: 7px 16px; border: none; border-radius: 2px; background: transparent; color: var(--muted); cursor: pointer; transition: background 0.15s, color 0.15s; }
+.nav-btn:hover { color: var(--ink); }
+.nav-btn.active { background: var(--ink); color: var(--paper); }
+
+.footer { text-align: center; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--border); padding: 24px 0 0; border-top: 1px solid var(--border); margin-top: 40px; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }

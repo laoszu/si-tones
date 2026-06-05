@@ -3,15 +3,15 @@ services:
     build: .
     ports:
       - "8000:8000"
-
     volumes:
       - ./frontend:/app/frontend:z
+      - ./frontend/dist:/app/frontend/dist:z
       - ./checkpoints:/app/checkpoints:z
       - ./main.py:/app/main.py:z
       - ./routes:/app/routes:z
       - ./inference:/app/inference:z
       - ./models:/app/models:z
       - ./utils:/app/utils:z
-      
+      - ./config.json:/app/config.json:z
     environment:
       - ENV=development
