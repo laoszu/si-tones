@@ -1,0 +1,28 @@
+.about {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding-top: 48px;
+  animation: fadeUp 0.35s ease both;
+}
+
+.about-hero { display: flex; flex-direction: column; gap: 16px; }
+.about-tag  { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--red); }
+.about-heading { font-family: var(--serif); font-size: 36px; font-weight: 700; line-height: 1.25; color: var(--ink); letter-spacing: 0.01em; }
+.about-lead { font-size: 15px; line-height: 1.7; color: var(--muted); max-width: 540px; }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.about-card { background: var(--paper); padding: 24px 28px; display: flex; flex-direction: column; gap: 10px; }
+.card-num   { font-size: 11px; letter-spacing: 0.18em; color: var(--red); }
+.card-title { font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.card-body  { font-size: 13px; line-height: 1.7; color: var(--muted); }

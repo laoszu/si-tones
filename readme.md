@@ -81,6 +81,26 @@ probs.png        # blank vs. max token probability over time
 
 ---
 
+## ## Local Deployment (Web App)
+
+You can run the complete web application (Frontend + FastAPI backend) locally..
+
+From the root directory of the project, run:
+
+```bash
+docker compose up --build
+```
+
+If you are developing the frontend locally without Docker and need to build the production assets manually:
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+Once the Docker containers are up and running, open your browser and navigate to: http://localhost:8000
+
 ## Notes on convergence
 
 The model needs ~30-50 epochs before CER drops meaningfully. Typical trajectory on AISHELL-1:

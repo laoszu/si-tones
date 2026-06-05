@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=DM+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:    #1a1612;
+  --paper:  #f5f0e8;
+  --red:    #c0392b;
+  --gold:   #b8860b;
+  --muted:  #7a6f63;
+  --border: #d4c9bc;
+  --panel:  #ede7d9;
+  --mono:   'DM Mono', monospace;
+  --serif:  'Noto Serif SC', serif;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  min-height: 100vh;
+}
+
+@keyframes fadeUp {
+  from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
