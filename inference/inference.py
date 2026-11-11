@@ -1,5 +1,4 @@
 import os
-import json
 import sys
 import tempfile
 
@@ -18,9 +17,13 @@ sys.path.insert(0, ROOT)
 
 from models.confromer.conformer import Conformer
 from utils.tokenizer import Tokenizer
+from utils.config import cfg, resolve
 
 import librosa
 import numpy as np
+
+INF = cfg['inference']
+HOP = int(cfg['sample_rate'] * cfg['hop_ms'] / 1000)
 
 def preprocess(audio_path, sample_rate, n_mels):
     waveform, sr = sf.read(audio_path, always_2d=True)
@@ -35,8 +38,8 @@ def preprocess(audio_path, sample_rate, n_mels):
 
     mel = torchaudio.transforms.MelSpectrogram(
         sample_rate=sample_rate,
-        n_fft=512,
-        hop_length=160,
+        n_fft=cfg['n_fft'],
+        hop_length=HOP,
         n_mels=n_mels,
     )(waveform_t).squeeze(0).T
 
@@ -54,51 +57,47 @@ def greedy_decode(lp, length, blank_id):
 
 def to_b64(fig):
     buff = io.BytesIO()
-    fig.savefig(buff, format='png', dpi=100, bbox_inches='tight')
+    fig.savefig(buff, format='png', dpi=INF['dpi'], bbox_inches='tight')
     buff.seek(0)
     plt.close(fig)
     return base64.b64encode(buff.read()).decode('utf-8')
 
 
-def extract_pitch(waveform_np, sr, hop_length=160):
+def extract_pitch(waveform_np, sr, hop_length=HOP):
     f0 = librosa.yin(
         waveform_np,
-        fmin=librosa.note_to_hz('C2'),# ~65 Hz
-        fmax=librosa.note_to_hz('C7'), # ~2093 Hz
+        fmin=librosa.note_to_hz(INF['pitch_fmin']),
+        fmax=librosa.note_to_hz(INF['pitch_fmax']),
         sr=sr,
         hop_length=hop_length,
     )
 
-    f0[f0 < 60] = np.nan
+    f0[f0 < INF['pitch_floor']] = np.nan
     return f0
 
 _model = None
 _tokenizer = None
-_cfg = None
 _dev = None
 
 def load_model():
-    global _model, _tokenizer, _cfg, _dev
+    global _model, _tokenizer, _dev
 
     _dev = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    with open(os.path.join(ROOT, 'config.json')) as f:
-        _cfg = json.load(f)
-
     _tokenizer = Tokenizer()
-    _tokenizer.load_vocab(_cfg['vocab_path'])
+    _tokenizer.load_vocab(resolve(cfg['vocab_path']))
 
-    ckpt_path = os.path.join(ROOT, 'checkpoints', 'conformer_best.pt')
+    ckpt_path = resolve(cfg['best_checkpoint'])
     ckpt = torch.load(ckpt_path, map_location=_dev, weights_only=False)
 
     _model = Conformer(
-        input_dim=_cfg['n_mels'],
-        d_model=_cfg['d_model'],
-        num_heads=_cfg['num_heads'],
-        ffn_dim=_cfg['ffn_dim'],
-        num_layers=_cfg['num_layers'],
-        conv_kernel=_cfg['conv_kernel'],
-        dropout=_cfg['dropout'],
+        input_dim=cfg['n_mels'],
+        d_model=cfg['d_model'],
+        num_heads=cfg['num_heads'],
+        ffn_dim=cfg['ffn_dim'],
+        num_layers=cfg['num_layers'],
+        conv_kernel=cfg['conv_kernel'],
+        dropout=cfg['dropout'],
         vocab_size=len(_tokenizer),
     ).to(_dev)
     _model.load_state_dict(ckpt['model'])
@@ -113,7 +112,7 @@ def run_inference(audio_bytes: bytes) -> str:
         tmp_path = tmp.name
 
     try:
-        mel, waveform, sr = preprocess(tmp_path, _cfg['sample_rate'], _cfg['n_mels'])
+        mel, waveform, sr = preprocess(tmp_path, cfg['sample_rate'], cfg['n_mels'])
     finally:
         os.unlink(tmp_path)
 
@@ -123,17 +122,17 @@ def run_inference(audio_bytes: bytes) -> str:
     with torch.no_grad():
         log_probs = _model(mels, mel_lengths)
 
-    blank_id = _tokenizer.char_to_id['<blank>']
+    blank_id = _tokenizer.char_to_id[_tokenizer.blank_token]
     collapsed, _ = greedy_decode(log_probs[0], mel_lengths[0].item(), blank_id)
     predicted = _tokenizer.decode(collapsed)
 
     wave_np = waveform.squeeze().numpy()
-    f0 = extract_pitch(wave_np, sr, hop_length=160)
+    f0 = extract_pitch(wave_np, sr)
 
     t_wave = np.arange(len(wave_np)) / sr
-    t_f0 = np.arange(len(f0)) * 160 / sr
+    t_f0 = np.arange(len(f0)) * HOP / sr
 
-    fig, ax1 = plt.subplots(figsize=(10, 3))
+    fig, ax1 = plt.subplots(figsize=INF['figsize'])
 
     ax1.plot(t_wave, wave_np, linewidth=0.4, color='steelblue', alpha=0.6, label='waveform')
     ax1.set_ylabel('Amplitude', color='steelblue')
@@ -142,13 +141,13 @@ def run_inference(audio_bytes: bytes) -> str:
     ax2 = ax1.twinx()
     ax2.plot(t_f0, f0, linewidth=1.5, color='orangered', label='F0 (pitch)')
     ax2.set_ylabel('Frequency (Hz)', color='orangered')
-    ax2.set_ylim(50, 400)
+    ax2.set_ylim(*INF['pitch_ylim'])
 
     ax1.set_title('Waveform + Pitch (F0)')
     fig.legend(loc='upper right')
     wav_img = to_b64(fig)
 
-    fig, ax = plt.subplots(figsize=(10, 3))
+    fig, ax = plt.subplots(figsize=INF['figsize'])
     ax.imshow(mel.T.numpy(), aspect='auto', origin='lower', cmap='viridis')
     ax.set_title('Mel spectrogram')
     ax.set_xlabel('Frame')
