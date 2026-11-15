@@ -200,5 +200,21 @@
             "neg_inf": -1000000000.0,
             "dp_init": -1000000000000.0
         }
+    },
+    "eda": {
+        "fig_dir": "report/gfx/eda",
+        "fig_dpi": 200,
+        "seed": 42,
+        "f0_utterances": 120,
+        "contour_points": 20,
+        "bootstrap": 2000,
+        "alpha": 0.05,
+        "top_k_coverage": [
+            100,
+            500,
+            1000,
+            2000
+        ],
+        "mel_sample": 300
     }
 }
