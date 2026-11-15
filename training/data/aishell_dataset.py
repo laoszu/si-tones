@@ -4,8 +4,10 @@ from torch.utils.data import Dataset
 import os
 import glob
 
+from utils.config import cfg
+
 class AishellDataset(Dataset):
-    def __init__(self, path, sample_rate=44100, n_mels=80):
+    def __init__(self, path, sample_rate=cfg["sample_rate"], n_mels=cfg["n_mels"]):
         self.path = path
 
         # sr should be either 16kHz or 44.1kHz
@@ -13,7 +15,7 @@ class AishellDataset(Dataset):
         self.sample_rate = sample_rate
         self.n_mels = n_mels
 
-        transcript_path = os.path.join(path, "transcript/aishell_transcript_v0.8.txt")
+        transcript_path = os.path.join(path, cfg["transcript_file"])
         self.transcripts = {}
         with open(transcript_path, "r", encoding="utf-8") as f:
             while line := f.readline():
@@ -22,18 +24,18 @@ class AishellDataset(Dataset):
                     parts = line.split()
                     self.transcripts[parts[0]] = "".join(parts[1:])
 
-        wav_dir = os.path.join(path, "wav")
+        wav_dir = os.path.join(path, cfg["wav_dir"])
         all_wavs = glob.glob(os.path.join(wav_dir, "**", "*.wav"), recursive=True)
         self.wav_files = [
             p for p in sorted(all_wavs)
             if os.path.splitext(os.path.basename(p))[0] in self.transcripts
         ]
 
-        hop_length = int(self.sample_rate * 0.01) # 10ms hop, no matter the sample rate
+        hop_length = int(self.sample_rate * cfg["hop_ms"] / 1000) # same hop (ms) no matter the sample rate
         self.mel_spectrogram_transform = torchaudio.transforms.MelSpectrogram(
             sample_rate=self.sample_rate,
             n_mels=self.n_mels,
-            n_fft=512,
+            n_fft=cfg["n_fft"],
             hop_length=hop_length,
         )
 
@@ -44,7 +46,7 @@ class AishellDataset(Dataset):
             waveform = torchaudio.transforms.Resample(sr, self.sample_rate)(waveform)
 
         mel = self.mel_spectrogram_transform(waveform)
-        mel = torch.log(mel + 1e-9)  # log-compression
+        mel = torch.log(mel + cfg["log_eps"])  # log-compression
 
         return mel.squeeze(0).transpose(0, 1)  # (time, ficzers)
 

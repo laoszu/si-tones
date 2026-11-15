@@ -2,6 +2,7 @@ import torch
 import json
 import os
 from utils.to_pinyin import to_pinyin
+from utils.config import cfg
 
 class Tokenizer:
 
@@ -10,10 +11,11 @@ class Tokenizer:
         self.id_to_char = {}
 
         # special tokens resevred
-        self.blank_token = "<blank>"
-        self.unk_token = "<unk>"
-        self.sos_token = "<sos>"
-        self.eos_token = "<eos>"
+        tokens = cfg["special_tokens"]
+        self.blank_token = tokens["blank"]
+        self.unk_token = tokens["unk"]
+        self.sos_token = tokens["sos"]
+        self.eos_token = tokens["eos"]
 
     def build_vocab(self, path):
         all = []

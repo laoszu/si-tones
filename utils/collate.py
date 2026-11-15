@@ -3,9 +3,10 @@ from torch.nn.utils.rnn import pad_sequence
 
 from utils.to_pinyin import to_pinyin
 from utils.tokenizer import Tokenizer
+from utils.config import cfg, resolve
 
 tokenizer = Tokenizer()
-tokenizer.load_vocab("vocab.json")
+tokenizer.load_vocab(resolve(cfg["vocab_path"]))
 
 def collate_fn(batch):
     mels, transcripts = zip(*batch)
@@ -22,7 +23,7 @@ def collate_fn(batch):
 
     transcript_lengths = torch.tensor([len(e) for e in encoded])
     transcripts_padded = pad_sequence(
-        encoded, batch_first=True, padding_value=tokenizer.char_to_id["<blank>"]
+        encoded, batch_first=True, padding_value=tokenizer.char_to_id[tokenizer.blank_token]
     )
 
     return mels_padded, mel_lengths, transcripts_padded, transcript_lengths

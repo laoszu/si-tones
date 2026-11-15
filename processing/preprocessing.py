@@ -1,18 +1,20 @@
 import torch
 import torchaudio
 
+from utils.config import cfg
+
 class AudioProcessor:
 
     # for a single audio
 
-    def __init__(self, sample_rate: int = 16000, n_mels: int = 80, n_fft: int = 512):
+    def __init__(self, sample_rate: int = cfg["sample_rate"], n_mels: int = cfg["n_mels"], n_fft: int = cfg["n_fft"]):
         self.sample_rate = sample_rate
 
         self.mel_transform = torchaudio.transforms.MelSpectrogram(
             sample_rate=sample_rate,
             n_mels=n_mels,
             n_fft=n_fft,
-            hop_length=int(sample_rate*0.01), # 10ms hop
+            hop_length=int(sample_rate * cfg["hop_ms"] / 1000),
         )
 
     def load(self, path: str) -> tuple[torch.Tensor, torch.Tensor]:
@@ -26,7 +28,7 @@ class AudioProcessor:
             waveform = torchaudio.transforms.Resample(sr, self.sample_rate)(waveform)
 
         mel = self.mel_transform(waveform)
-        mel = torch.log(mel + 1e-9)
+        mel = torch.log(mel + cfg["log_eps"])
         mel = mel.squeeze(0).transpose(0, 1) # (T, n_mels)
 
         return mel, waveform

@@ -1,20 +1,220 @@
 {
-    "data_path":    "data_aishell",
-    "vocab_path":   "utils/vocab.json",
-    "checkpoint":   "checkpoints/conformer.pt",
-
-    "sample_rate":  16000,
-    "n_mels":       80,
-
-    "batch_size":   16,
-    "num_epochs":   50,
-    "lr":           5e-4,
+    "data_path": "data_aishell",
+    "vocab_path": "utils/vocab.json",
+    "checkpoint": "checkpoints/conformer.pt",
+    "sample_rate": 16000,
+    "n_mels": 80,
+    "n_fft": 512,
+    "hop_ms": 10,
+    "log_eps": 1e-09,
+    "transcript_file": "transcript/aishell_transcript_v0.8.txt",
+    "wav_dir": "wav",
+    "best_checkpoint": "checkpoints/conformer_best.pt",
+    "wandb_artifact": "dlaoszu/si-tone/conformer-checkpoint:latest",
+    "batch_size": 16,
+    "num_epochs": 50,
+    "num_workers": 4,
+    "lr": 0.0005,
+    "adam_betas": [
+        0.9,
+        0.98
+    ],
+    "adam_eps": 1e-09,
+    "grad_clip": 5.0,
     "warmup_steps": 10000,
-
-    "d_model":      144,
-    "num_heads":    4,
-    "ffn_dim":      576,
-    "num_layers":   16,
-    "conv_kernel":  31,
-    "dropout":      0.1
+    "d_model": 144,
+    "num_heads": 4,
+    "ffn_dim": 576,
+    "num_layers": 16,
+    "conv_kernel": 31,
+    "dropout": 0.1,
+    "inference": {
+        "pitch_fmin": "C2",
+        "pitch_fmax": "C7",
+        "pitch_floor": 60,
+        "pitch_ylim": [
+            50,
+            400
+        ],
+        "figsize": [
+            10,
+            3
+        ],
+        "dpi": 100
+    },
+    "special_tokens": {
+        "blank": "<blank>",
+        "unk": "<unk>",
+        "sos": "<sos>",
+        "eos": "<eos>"
+    },
+    "tones": {
+        "colors": {
+            "1": "#E30000",
+            "2": "#02B31C",
+            "3": "#1510F0",
+            "4": "#8900BF",
+            "5": "#777777"
+        },
+        "f0_color": "#1d4ed8",
+        "chars_per_line": 45,
+        "cjk_fonts": [
+            "Noto Sans CJK SC",
+            "Source Han Sans SC",
+            "Noto Sans SC",
+            "WenQuanYi",
+            "SimHei",
+            "Microsoft YaHei",
+            "PingFang",
+            "Heiti",
+            "Noto Sans CJK",
+            "CJK"
+        ],
+        "highpass_hz": 70,
+        "gate": 0.06,
+        "edge_trim": 0.02,
+        "f0_search": [
+            70,
+            600
+        ],
+        "f0_default": [
+            75,
+            400
+        ],
+        "f0_limits": [
+            60,
+            700
+        ],
+        "plot": {
+            "waveform_height": 3.6,
+            "spectrogram_height": 5,
+            "width_per_second": 1.2,
+            "width_base": 3,
+            "width_range": [
+                14,
+                36
+            ],
+            "title_size": 13,
+            "hanzi_size_waveform": [
+                5,
+                14
+            ],
+            "hanzi_size_spectrogram": [
+                5,
+                13
+            ],
+            "pinyin_size": 10,
+            "pinyin_size_rotated": [
+                5,
+                9
+            ],
+            "spec_max_hz": 5000,
+            "spec_window_ms": 10,
+            "spec_hop_ms": 2,
+            "spec_range_db": 50,
+            "preemphasis": 0.97,
+            "dpi": 200,
+            "usable_width": 0.9,
+            "margins": {
+                "left": 0.05,
+                "right": 0.95,
+                "bottom": 0.17,
+                "top": 0.9
+            },
+            "title_line_height": 0.07,
+            "waveform_axes_frac": 0.73,
+            "guide_color": ".6",
+            "guide_lw": 0.7,
+            "tint_alpha": 0.1,
+            "wave_color": ".25",
+            "wave_lw": 0.5,
+            "wave_ylim": [
+                -1.05,
+                2
+            ],
+            "label_y": 0.97,
+            "hanzi_width_scale": 0.8,
+            "hanzi_line_spacing": 1.3,
+            "pinyin_char_width": 0.58,
+            "pinyin_min_fit": 7,
+            "spec_log_eps": 1e-12,
+            "f0_ylim_scale": [
+                0.95,
+                1.12
+            ],
+            "f0_alpha": 0.5,
+            "f0_lw": 1.2,
+            "f0_halo_lw": 4.5,
+            "seg_lw": 2.8,
+            "seg_halo_lw": 5,
+            "annot_halo_lw": 3,
+            "annot_offset": 6,
+            "halo_color": "white"
+        },
+        "highpass_order": 4,
+        "edge_window": 0.03,
+        "f0": {
+            "hop_ms": 10,
+            "pyin_window_ms": 80,
+            "rms_hop_ms": 5,
+            "rms_window_ms": 30,
+            "min_frames": 30,
+            "ref_hz": 100,
+            "hist_bin_st": 0.5,
+            "hist_pad_st": 1,
+            "hist_smooth": 5,
+            "range_down": 1.6,
+            "range_up": 1.85,
+            "edge_low": 1.04,
+            "edge_high": 0.96,
+            "median_size": 11,
+            "octave_jump_st": 5,
+            "min_run": 4,
+            "medfilt_kernel": 5,
+            "medfilt_short": 3,
+            "closing_size": 3
+        },
+        "syllables": {
+            "hop_ms": 5,
+            "band_hz": [
+                120,
+                2500
+            ],
+            "band_order": 4,
+            "rms_window_ms": 30,
+            "smooth": 5,
+            "db_eps": 1e-08,
+            "peak_percentile": 98,
+            "active_db_below_peak": 35,
+            "prominence": 1,
+            "prominence_cap": 15,
+            "grid_margin": 6,
+            "grid_step": 2,
+            "min_dur": 0.05,
+            "floor_dur": 0.02,
+            "dur_sigma": 0.5,
+            "dur_weight": 6,
+            "voiced_threshold": 0.5,
+            "min_voiced_frames": 3,
+            "unvoiced_penalty": 8,
+            "neg_inf": -1000000000.0,
+            "dp_init": -1000000000000.0
+        }
+    },
+    "eda": {
+        "fig_dir": "report/gfx/eda",
+        "fig_dpi": 200,
+        "seed": 42,
+        "f0_utterances": 120,
+        "contour_points": 20,
+        "bootstrap": 2000,
+        "alpha": 0.05,
+        "top_k_coverage": [
+            100,
+            500,
+            1000,
+            2000
+        ],
+        "mel_sample": 300
+    }
 }
